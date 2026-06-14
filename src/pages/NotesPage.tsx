@@ -1,7 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import katex from "katex";
 import "katex/dist/katex.min.css";
 import type { NoteItem } from "../types/navigation";
 
@@ -16,34 +14,96 @@ const looksLikeFormula = (line: string) => {
     && !/[：:。；;]/.test(trimmed);
 };
 
-const normalizeFormulaLine = (line: string) => line
-  .trim()
-  .replace(/\s+\*\s+/g, " \\times ")
-  .replace(/\s*->\s*/g, " \\to ");
+const normalizeFormulaLine = (line: string) => {
+  const trimmed = line.trim();
+  if (/^T\s*=\s*8\s*\/\s*2/i.test(trimmed) && /L\s*-\s*90/.test(trimmed)) {
+    return "T = \\frac{8}{2^{\\frac{L-90}{5}}}";
+  }
 
-const formatNoteForPreview = (content: string) => {
-  const lines = content.split("\n");
-  const output: string[] = [];
-  let inMathBlock = false;
+  return trimmed
+    .replace(/\b1\s*\/\s*2\b/g, "\\frac{1}{2}")
+    .replace(/\b1\s*\/\s*N\b/g, "\\frac{1}{N}")
+    .replace(/\s+\*\s+/g, " \\times ")
+    .replace(/\s*->\s*/g, " \\to ");
+};
 
-  lines.forEach((line) => {
-    if (line.trim().startsWith("$$")) {
-      inMathBlock = !inMathBlock;
-      output.push(line);
-      return;
-    }
-
-    if (!inMathBlock && looksLikeFormula(line)) {
-      output.push("$$");
-      output.push(normalizeFormulaLine(line));
-      output.push("$$");
-      return;
-    }
-
-    output.push(line);
+const renderFormula = (formula: string) => {
+  const html = katex.renderToString(normalizeFormulaLine(formula), {
+    displayMode: true,
+    throwOnError: false,
   });
 
-  return output.join("\n");
+  return <div className="note-formula" dangerouslySetInnerHTML={{ __html: html }} />;
+};
+
+const renderTextLine = (line: string, key: string) => {
+  const text = line.trim();
+  if (!text) {
+    return null;
+  }
+
+  if (/^\d+[.、]\s*/.test(text)) {
+    return <h4 className="note-preview-title" key={key}>{text}</h4>;
+  }
+
+  if (/^[•●\-]\s*/.test(text)) {
+    return <p className="note-preview-bullet" key={key}>{text.replace(/^[•●\-]\s*/, "")}</p>;
+  }
+
+  if (text.includes("速記") || text.includes("對應表")) {
+    return <p className="note-preview-memory" key={key}>{text}</p>;
+  }
+
+  return <p className="note-preview-text" key={key}>{text}</p>;
+};
+
+const renderNotePreview = (content: string) => {
+  const lines = content.split("\n");
+  const blocks: ReactNode[] = [];
+  let textBuffer: string[] = [];
+  let mathBuffer: string[] = [];
+  let inMathBlock = false;
+
+  const flushText = () => {
+    textBuffer
+      .map((line, index) => renderTextLine(line, `text-${blocks.length}-${index}`))
+      .filter(Boolean)
+      .forEach((block) => blocks.push(block));
+    textBuffer = [];
+  };
+
+  lines.forEach((line, index) => {
+    if (line.trim().startsWith("$$")) {
+      if (inMathBlock) {
+        blocks.push(<div key={`math-${index}`}>{renderFormula(mathBuffer.join(" "))}</div>);
+        mathBuffer = [];
+      } else {
+        flushText();
+      }
+      inMathBlock = !inMathBlock;
+      return;
+    }
+
+    if (inMathBlock) {
+      mathBuffer.push(line);
+      return;
+    }
+
+    if (looksLikeFormula(line)) {
+      flushText();
+      blocks.push(<div key={`formula-${index}`}>{renderFormula(line)}</div>);
+      return;
+    }
+
+    textBuffer.push(line);
+  });
+
+  if (inMathBlock && mathBuffer.length > 0) {
+    blocks.push(<div key="math-open">{renderFormula(mathBuffer.join(" "))}</div>);
+  }
+  flushText();
+
+  return blocks;
 };
 
 export function NotesPage({
@@ -136,7 +196,7 @@ export function NotesPage({
       ) : filteredNotes.map((note) => {
         const draft = drafts[note.id] ?? note.content;
         const hasUnsavedChange = draft !== note.content;
-        const previewContent = formatNoteForPreview(draft);
+        const previewContent = renderNotePreview(draft);
 
         return (
           <section className="card favorite-search-card" key={note.id}>
@@ -159,9 +219,7 @@ export function NotesPage({
             {draft.trim() && (
               <div className="note-preview">
                 <strong>筆記預覽</strong>
-                <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
-                  {previewContent}
-                </ReactMarkdown>
+                {previewContent}
               </div>
             )}
             {savedMessages[note.id] && <p className="voice-status">{savedMessages[note.id]}</p>}

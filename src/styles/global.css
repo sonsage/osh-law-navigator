@@ -1584,26 +1584,52 @@ select {
 
 .note-preview {
   display: grid;
-  gap: 8px;
+  gap: 12px;
   border: 1px solid #dbe3ee;
   border-radius: 8px;
-  padding: 12px;
-  background: #f8fbff;
+  padding: 16px;
+  background: #ffffff;
 }
 
 .note-preview > strong {
   color: #12365f;
 }
 
-.note-preview p,
-.note-preview li {
-  color: #263347;
-  font-size: 14px;
-  font-weight: 700;
+.note-preview-title {
+  margin: 0;
+  color: #111827;
+  font-size: 20px;
+  font-weight: 950;
+  line-height: 1.35;
 }
 
-.note-preview p {
-  margin: 0 0 8px;
+.note-preview-text,
+.note-preview-bullet,
+.note-preview-memory {
+  margin: 0;
+  color: #111827;
+  font-size: 17px;
+  font-weight: 750;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.note-preview-bullet {
+  position: relative;
+  padding-left: 22px;
+}
+
+.note-preview-bullet::before {
+  position: absolute;
+  left: 3px;
+  content: "•";
+  color: #111827;
+  font-weight: 950;
+}
+
+.note-preview-memory {
+  color: #d32323;
+  font-weight: 900;
 }
 
 .note-preview ul,
@@ -1615,13 +1641,22 @@ select {
 .note-preview .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
-  margin: 10px 0;
-  padding: 8px 0;
+  margin: 0;
+  padding: 12px 0;
+  text-align: center;
 }
 
 .note-preview .katex {
-  color: #082f57;
-  font-size: 1.08em;
+  color: #111827;
+  font-size: 1.35em;
+}
+
+.note-formula {
+  display: grid;
+  place-items: center;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 8px 0;
 }
 
 .note-save-button {

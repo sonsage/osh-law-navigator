@@ -10,7 +10,7 @@ import { HomePage } from "./pages/HomePage";
 import { NotesPage } from "./pages/NotesPage";
 import type { FavoriteItem, NoteItem, PageKey } from "./types/navigation";
 import { favoriteChangedEvent, loadFavorites, sameFavorite, saveFavorites } from "./utils/favorites";
-import { buildFormulaNoteContent, createNoteFromFavorite, loadNotes, sameNote, saveNotes } from "./utils/notes";
+import { createNoteFromFavorite, loadNotes, sameNote, saveNotes } from "./utils/notes";
 
 const pageMeta: Record<PageKey, { title: string; subtitle?: string }> = {
   home: { title: "職業安全衛生法導航", subtitle: "乙級管理員考試利器" },
@@ -83,11 +83,6 @@ function App() {
       const existingNote = current.find((note) => sameNote(note, nextNote));
       if (!existingNote) {
         return [nextNote, ...current];
-      }
-
-      const formulaContent = buildFormulaNoteContent(item);
-      if (!existingNote.content.trim() && formulaContent) {
-        return current.map((note) => sameNote(note, nextNote) ? { ...note, content: formulaContent } : note);
       }
 
       return current;

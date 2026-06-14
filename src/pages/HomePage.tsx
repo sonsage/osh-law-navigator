@@ -23,6 +23,13 @@ const entries: Array<{ page: PageKey; title: string; text: string; icon: string;
     tone: "green",
   },
   {
+    page: "operationPoints",
+    title: "作業考點",
+    text: "整理設施規則、營造標準常見某某作業名單，再開 AI 查計畫、主管與報告書。",
+    icon: "業",
+    tone: "rose",
+  },
+  {
     page: "favorites",
     title: "收藏",
     text: "保留查過的 AI 搜尋路徑，之後可直接重新搜尋。",

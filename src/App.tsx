@@ -8,6 +8,7 @@ import { DisclaimerPage } from "./pages/DisclaimerPage";
 import { FavoritesPage } from "./pages/FavoritesPage";
 import { HomePage } from "./pages/HomePage";
 import { NotesPage } from "./pages/NotesPage";
+import { OperationPointsPage } from "./pages/OperationPointsPage";
 import type { FavoriteItem, NoteItem, PageKey } from "./types/navigation";
 import { favoriteChangedEvent, loadFavorites, sameFavorite, saveFavorites } from "./utils/favorites";
 import { createNoteFromFavorite, loadNotes, sameNote, saveNotes } from "./utils/notes";
@@ -17,6 +18,7 @@ const pageMeta: Record<PageKey, { title: string; subtitle?: string }> = {
   articleNode: { title: "法條導航", subtitle: "第一、二章官方條文入口" },
   conceptMap: { title: "這條考什麼", subtitle: "用條號與關鍵詞查考法" },
   articlePositioning: { title: "法條定位" },
+  operationPoints: { title: "作業考點", subtitle: "設施規則與營造標準作業名單" },
   favorites: { title: "收藏", subtitle: "保留常用查證入口" },
   notes: { title: "我的筆記", subtitle: "整理 AI 摘要與考點心得" },
   disclaimer: { title: "聲明", subtitle: "開發者與資料來源" },
@@ -124,10 +126,11 @@ function App() {
         {page === "articleNode" && <ArticleNodePage onOpenArticleExam={openArticleExam} />}
         {page === "conceptMap" && <ConceptMapPage selectedArticleId={selectedExamArticleId} onOpenArticlePosition={openArticlePosition} />}
         {page === "articlePositioning" && <ArticlePositioningPage selectedArticleId={selectedPositionArticleId} />}
+        {page === "operationPoints" && <OperationPointsPage />}
         {page === "favorites" && <FavoritesPage favorites={favorites} onRemove={toggleFavorite} onAddNote={addNoteFromFavorite} />}
         {page === "notes" && <NotesPage notes={notes} onRemove={removeNote} onUpdate={updateNote} />}
         {page === "disclaimer" && <DisclaimerPage />}
-        {!["home", "articleNode", "conceptMap", "articlePositioning", "favorites", "notes", "disclaimer"].includes(page) && <HomePage onNavigate={navigate} />}
+        {!["home", "articleNode", "conceptMap", "articlePositioning", "operationPoints", "favorites", "notes", "disclaimer"].includes(page) && <HomePage onNavigate={navigate} />}
       </main>
       <BottomNav currentPage={page} onNavigate={navigate} />
     </div>

@@ -1609,6 +1609,64 @@ select {
   margin-top: 10px;
 }
 
+.operation-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.operation-filter-row button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 12px;
+  color: #425169;
+  background: #eef4fb;
+  font-weight: 900;
+}
+
+.operation-filter-row button.active {
+  color: #ffffff;
+  background: #12365f;
+}
+
+.operation-point-list {
+  display: grid;
+  gap: 12px;
+}
+
+.operation-point-card {
+  display: grid;
+  gap: 9px;
+}
+
+.operation-point-card small {
+  color: #5d6b80;
+  font-weight: 850;
+}
+
+.operation-point-card h3 {
+  margin: 0;
+  color: #12365f;
+  font-size: 18px;
+}
+
+.operation-keyword-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.operation-keyword-row span {
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: #425169;
+  background: #eef4fb;
+  font-size: 12px;
+  font-weight: 850;
+}
+
 .note-save-button {
   color: #ffffff;
   background: #1d7d72;

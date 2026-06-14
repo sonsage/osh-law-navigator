@@ -3,6 +3,7 @@ export type PageKey =
   | "articleNode"
   | "conceptMap"
   | "articlePositioning"
+  | "operationPoints"
   | "favorites"
   | "notes"
   | "disclaimer";

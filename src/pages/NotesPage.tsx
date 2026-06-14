@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { type SyntheticEvent, useEffect, useMemo, useState } from "react";
 import { LicenseNode } from "../components/LicenseNode";
 import { calculationFormulaGroups } from "../data/calculationFormulaNotes";
 import type { NoteItem } from "../types/navigation";
-import { loadLicenseAccess } from "../utils/licenseCode";
+import { getDeviceId, getMaskedDeviceId, loadLicenseAccess } from "../utils/licenseCode";
 
 export function NotesPage({
   notes,
@@ -22,6 +22,7 @@ export function NotesPage({
   const [formulaSearch, setFormulaSearch] = useState("");
   const [licensed, setLicensed] = useState(() => loadLicenseAccess().unlocked);
   const formulaCount = calculationFormulaGroups.reduce((sum, group) => sum + group.formulas.length, 0);
+  const protectedDeviceLabel = getMaskedDeviceId(getDeviceId());
 
   useEffect(() => {
     setDrafts((current) => {
@@ -209,6 +210,10 @@ export function NotesPage({
     }, 1800);
   };
 
+  const blockProtectedContent = (event: SyntheticEvent) => {
+    event.preventDefault();
+  };
+
   if (!licensed) {
     return (
       <div className="stack">
@@ -263,7 +268,14 @@ export function NotesPage({
         {notebookMessage && <p className="voice-status">{notebookMessage}</p>}
       </section>
 
-      <section className="card formula-note-card">
+      <section
+        className="card formula-note-card protected-content-card"
+        onContextMenu={blockProtectedContent}
+        onCopy={blockProtectedContent}
+        onCut={blockProtectedContent}
+        onDragStart={blockProtectedContent}
+      >
+        <div className="protected-watermark" aria-hidden="true">授權裝置 {protectedDeviceLabel}</div>
         <div className="formula-note-heading">
           <div>
             <small>固定筆記</small>

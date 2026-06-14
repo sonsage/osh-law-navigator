@@ -3,6 +3,37 @@ import katex from "katex";
 import "katex/dist/katex.min.css";
 import type { NoteItem } from "../types/navigation";
 
+const noteTemplates = [
+  {
+    id: "noise-exposure",
+    label: "插入噪音公式範本",
+    content: `1. 容許暴露時間公式 (T)
+
+當噪音在 80 分貝以上時，音壓級每增加 5 分貝，容許暴露時間即減半。
+
+$$
+T = \\frac{8}{2^{\\frac{L-90}{5}}}
+$$
+
+• L：測得的噪音音壓級（dBA）。
+• T：該音壓級下的容許暴露時間（小時）。
+
+速記對應表：90dB → 8小時；95dB → 4小時；100dB → 2小時；85dB → 16小時`,
+  },
+  {
+    id: "safety-distance",
+    label: "插入安全距離公式",
+    content: `安全距離公式
+
+$$
+D = 1.6 \\times T_m
+$$
+
+• D：安全距離。
+• T_m：手指離開按鈕至滑塊抵達下死點之最大時間。`,
+  },
+];
+
 const looksLikeFormula = (line: string) => {
   const trimmed = line.trim();
   if (!trimmed || trimmed.startsWith("$$") || trimmed.startsWith("|")) {
@@ -16,11 +47,18 @@ const looksLikeFormula = (line: string) => {
 
 const normalizeFormulaLine = (line: string) => {
   const trimmed = line.trim();
-  if (/^T\s*=\s*8\s*\/\s*2/i.test(trimmed) && /L\s*-\s*90/.test(trimmed)) {
+  const compact = trimmed.replace(/\s+/g, "");
+  if (
+    (/^T\s*=\s*8\s*\/\s*2/i.test(trimmed) && /L\s*-\s*90/.test(trimmed))
+    || (/8T=?L-?90/i.test(compact) && /25/.test(compact))
+    || (/通用公式/.test(trimmed) && /噪音|分貝|dB/i.test(trimmed))
+  ) {
     return "T = \\frac{8}{2^{\\frac{L-90}{5}}}";
   }
 
   return trimmed
+    .replace(/T_\{m\}/g, "T_m")
+    .replace(/T_m/g, "T_m")
     .replace(/\b1\s*\/\s*2\b/g, "\\frac{1}{2}")
     .replace(/\b1\s*\/\s*N\b/g, "\\frac{1}{N}")
     .replace(/\s+\*\s+/g, " \\times ")
@@ -164,6 +202,16 @@ export function NotesPage({
     }, 1800);
   };
 
+  const insertTemplate = (note: NoteItem, templateContent: string) => {
+    setDrafts((current) => {
+      const original = current[note.id] ?? note.content;
+      const nextContent = original.trim()
+        ? `${original.trim()}\n\n${templateContent}`
+        : templateContent;
+      return { ...current, [note.id]: nextContent };
+    });
+  };
+
   return (
     <div className="stack">
       <section className="card">
@@ -208,6 +256,19 @@ export function NotesPage({
             </div>
             <label className="note-editor">
               <strong>筆記內容</strong>
+              <span className="note-editor-hint">上方是純文字編輯區；公式會在下方「筆記預覽」顯示。</span>
+              <div className="note-template-actions">
+                {noteTemplates.map((template) => (
+                  <button
+                    className="button note-template-button"
+                    key={template.id}
+                    type="button"
+                    onClick={() => insertTemplate(note, template.content)}
+                  >
+                    {template.label}
+                  </button>
+                ))}
+              </div>
               <textarea
                 value={draft}
                 onChange={(event) => {

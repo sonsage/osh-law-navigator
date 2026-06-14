@@ -1549,6 +1549,26 @@ select {
   color: #12365f;
 }
 
+.note-editor-hint {
+  color: #5d6b80;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.note-template-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.note-template-button {
+  min-height: 38px;
+  color: #4b3100;
+  background: #fff0c8;
+  font-size: 13px;
+}
+
 .note-editor textarea {
   min-height: 260px;
   border: 1px solid #c8d4e2;

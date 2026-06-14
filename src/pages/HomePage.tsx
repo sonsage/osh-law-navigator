@@ -66,10 +66,6 @@ export function HomePage({ onNavigate }: { onNavigate: (page: PageKey) => void }
           </button>
         ))}
       </section>
-
-      <p className="disclaimer">
-        V1.0 只整理職業安全衛生法第一、二章的導覽入口；條文全文、修正狀態與子法內容，以全國法規資料庫及主管機關最新資料為準。
-      </p>
     </>
   );
 }

@@ -1596,6 +1596,202 @@ select {
   background: #e4ebf3;
 }
 
+.formula-note-card {
+  display: grid;
+  gap: 12px;
+  border-left: 5px solid #1d7d72;
+}
+
+.formula-note-heading {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.formula-note-heading small {
+  color: #1d7d72;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.formula-note-heading h2 {
+  margin-top: 2px;
+}
+
+.formula-note-heading > span {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #e2f5e8;
+  color: #27613f;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.formula-search-field {
+  display: grid;
+  gap: 8px;
+}
+
+.formula-search-field strong {
+  color: #12365f;
+}
+
+.formula-search-field input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #c8d4e2;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #12365f;
+  background: #ffffff;
+  font: inherit;
+  font-weight: 800;
+}
+
+.formula-tip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.formula-tip-list span {
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #eef4fb;
+  color: #405169;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.formula-group-list {
+  display: grid;
+  gap: 10px;
+}
+
+.formula-group {
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+  background: #f8fbff;
+  overflow: hidden;
+}
+
+.formula-group summary {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 46px;
+  padding: 10px 12px;
+  color: #12365f;
+  cursor: pointer;
+  list-style: none;
+}
+
+.formula-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.formula-group summary strong {
+  font-size: 15px;
+}
+
+.formula-group summary span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: #e7edf4;
+  color: #12365f;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.formula-row-list {
+  display: grid;
+  gap: 8px;
+  padding: 0 10px 10px;
+}
+
+.formula-row {
+  display: grid;
+  gap: 6px;
+  border: 1px solid #e1e9f2;
+  border-radius: 8px;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.formula-row strong {
+  color: #34445a;
+  font-size: 13px;
+}
+
+.formula-row code {
+  max-width: 100%;
+  border-radius: 7px;
+  padding: 8px 9px;
+  background: #162033;
+  color: #ffffff;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.formula-row small,
+.formula-empty-message {
+  color: #66758a;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.note-formula-panel {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #cde4d5;
+  border-radius: 8px;
+  padding: 10px;
+  background: #f2fbf5;
+}
+
+.note-formula-heading {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.note-formula-heading strong {
+  color: #1d6e46;
+}
+
+.note-formula-heading .button {
+  min-height: 34px;
+  padding: 0 10px;
+  color: #1d6e46;
+  background: #dff3e6;
+  font-size: 12px;
+}
+
+.note-formula-panel pre {
+  max-height: 260px;
+  margin: 0;
+  border-radius: 7px;
+  padding: 10px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #162033;
+  color: #ffffff;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
 .favorite-card-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));

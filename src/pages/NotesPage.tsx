@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { calculationFormulaGroups } from "../data/calculationFormulaNotes";
 import type { NoteItem } from "../types/navigation";
+import { buildFormulaNoteContent } from "../utils/notes";
 
 export function NotesPage({
   notes,
@@ -13,12 +15,13 @@ export function NotesPage({
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [savedMessages, setSavedMessages] = useState<Record<string, string>>({});
   const [noteSearch, setNoteSearch] = useState("");
+  const [formulaSearch, setFormulaSearch] = useState("");
 
   useEffect(() => {
     setDrafts((current) => {
       const next = { ...current };
       notes.forEach((note) => {
-        if (next[note.id] === undefined) {
+        if (next[note.id] === undefined || (!next[note.id].trim() && note.content.trim())) {
           next[note.id] = note.content;
         }
       });
@@ -40,6 +43,25 @@ export function NotesPage({
       note.content,
     ].some((value) => value.toLowerCase().includes(keyword)));
   }, [noteSearch, notes]);
+
+  const filteredFormulaGroups = useMemo(() => {
+    const keyword = formulaSearch.trim().toLowerCase();
+    if (!keyword) {
+      return calculationFormulaGroups;
+    }
+
+    return calculationFormulaGroups
+      .map((group) => ({
+        ...group,
+        formulas: group.formulas.filter((formula) => [
+          group.title,
+          formula.name,
+          formula.expression,
+          formula.note ?? "",
+        ].some((value) => value.toLowerCase().includes(keyword))),
+      }))
+      .filter((group) => group.formulas.length > 0);
+  }, [formulaSearch]);
 
   const confirmRemove = (note: NoteItem) => {
     if (window.confirm(`確定刪除筆記「${note.title}」？`)) {
@@ -63,7 +85,54 @@ export function NotesPage({
     <div className="stack">
       <section className="card">
         <h2>我的筆記</h2>
-        <p>整理 AI 摘要、考點心得與易錯提醒。公式或圖片先保留在原搜尋結果，筆記只記考試重點。</p>
+        <p>整理 AI 摘要、考點心得與易錯提醒。計算題公式已整理成考場可按的橫式，個人筆記可從收藏搜尋建立。</p>
+      </section>
+
+      <section className="card formula-note-card">
+        <div className="formula-note-heading">
+          <div>
+            <small>固定筆記</small>
+            <h2>考場公式橫式筆記</h2>
+          </div>
+          <span>{calculationFormulaGroups.reduce((sum, group) => sum + group.formulas.length, 0)} 式</span>
+        </div>
+        <label className="formula-search-field">
+          <strong>搜尋公式</strong>
+          <input
+            type="search"
+            value={formulaSearch}
+            onChange={(event) => setFormulaSearch(event.target.value)}
+            placeholder="輸入噪音、TWA、WBGT、風量、照度..."
+          />
+        </label>
+        <div className="formula-tip-list">
+          <span>log=log10</span>
+          <span>百分比先除以 100</span>
+          <span>先統一單位再按</span>
+        </div>
+        {filteredFormulaGroups.length === 0 ? (
+          <p className="formula-empty-message">找不到符合「{formulaSearch}」的公式。</p>
+        ) : (
+          <div className="formula-group-list">
+            {filteredFormulaGroups.map((group) => (
+              <details className="formula-group" key={group.title} open={Boolean(formulaSearch)}>
+                <summary>
+                  <strong>{group.title}</strong>
+                  <span>{group.formulas.length}</span>
+                </summary>
+                <div className="formula-row-list">
+                  {group.formulas.map((formula) => (
+                    <article className="formula-row" key={`${group.title}-${formula.name}`}>
+                      <strong>{formula.name}</strong>
+                      <code>{formula.expression}</code>
+                      {formula.note && <small>{formula.note}</small>}
+                    </article>
+                  ))}
+                </div>
+              </details>
+            ))}
+          </div>
+        )}
       </section>
 
       {notes.length > 0 && (
@@ -91,6 +160,16 @@ export function NotesPage({
       ) : filteredNotes.map((note) => {
         const draft = drafts[note.id] ?? note.content;
         const hasUnsavedChange = draft !== note.content;
+        const formulaContent = buildFormulaNoteContent({
+          id: note.id,
+          type: "aiSearch",
+          title: note.title,
+          subtitle: note.searchQuery,
+          keyword: note.keyword,
+          searchQuery: note.searchQuery,
+          sourceLabel: note.sourceLabel,
+          url: note.searchUrl,
+        });
 
         return (
           <section className="card favorite-search-card" key={note.id}>
@@ -100,6 +179,23 @@ export function NotesPage({
               <p><strong>關鍵字：</strong>{note.keyword}</p>
               <p><strong>搜尋句：</strong>{note.searchQuery}</p>
             </div>
+            {formulaContent && (
+              <div className="note-formula-panel">
+                <div className="note-formula-heading">
+                  <strong>橫式計算式</strong>
+                  <button
+                    className="button button-ghost"
+                    type="button"
+                    onClick={() => {
+                      setDrafts((current) => ({ ...current, [note.id]: formulaContent }));
+                    }}
+                  >
+                    填入筆記
+                  </button>
+                </div>
+                <pre>{formulaContent}</pre>
+              </div>
+            )}
             <label className="note-editor">
               <strong>筆記內容</strong>
               <textarea

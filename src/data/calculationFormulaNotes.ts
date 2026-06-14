@@ -71,21 +71,21 @@ export const calculationFormulaGroups: CalculationFormulaGroup[] = [
     ],
   },
   {
-    title: "通風與換氣",
+    title: "整體換氣",
     formulas: [
-      { name: "風量 Q", expression: "風速*截面積", sourceType: "conversion", sourceLabel: "文字換算式", note: "非法規原式；有機、特化、粉塵等題目若引用法規或附表，優先用該法規原式。" },
-      { name: "圓管截面積", expression: "3.1416*直徑^2/4", sourceType: "conversion", sourceLabel: "幾何換算式" },
-      { name: "矩形風管截面積", expression: "長*寬", sourceType: "conversion", sourceLabel: "幾何換算式" },
-      { name: "換氣次數 ACH，Q 為 m3/hr", expression: "Q/空間體積", sourceType: "conversion", sourceLabel: "文字換算式", note: "非法規原式；題目若給法規條件，回原法規或附表確認。" },
-      { name: "換氣次數 ACH，Q 為 m3/min", expression: "Q*60/空間體積", sourceType: "conversion", sourceLabel: "文字換算式", note: "非法規原式；題目若給法規條件，回原法規或附表確認。" },
-      { name: "已知 ACH 求所需風量", expression: "ACH*空間體積/60", sourceType: "conversion", sourceLabel: "文字換算式", note: "非法規原式；題目若給法規條件，回原法規或附表確認。" },
-      { name: "捕集效率%", expression: "捕集量/產生量*100", sourceType: "conversion", sourceLabel: "文字換算式" },
-      { name: "稀釋後濃度，完全混合", expression: "產生率/通風量", sourceType: "conversion", sourceLabel: "概念換算式", note: "僅作概念換算；職安乙級法規題優先查有機、特化、粉塵等原條文。" },
-      { name: "兩風量混合濃度", expression: "(Q1*C1+Q2*C2)/(Q1+Q2)", sourceType: "conversion", sourceLabel: "概念換算式" },
+      { name: "換氣次數 ACH，Q 為 m3/hr", expression: "Q/空間體積", sourceType: "conversion", sourceLabel: "考場換算式", note: "題目問每小時換氣次數時用；Q 若為 m3/min，先乘 60。" },
+      { name: "已知 ACH 求風量 Q", expression: "ACH*空間體積/60", sourceType: "conversion", sourceLabel: "考場換算式", note: "算出 Q 為 m3/min。若題目要求 m3/hr，使用 ACH*空間體積。" },
+      { name: "完全混合稀釋濃度", expression: "產生率/通風量", sourceType: "conversion", sourceLabel: "概念換算式", note: "只在題目明確要用完全混合稀釋概念時用；法規題先看附表或條文。" },
+    ],
+  },
+  {
+    title: "局部排氣",
+    formulas: [
       { name: "氣罩壓力損失 PR", expression: "F*PV2", sourceType: "exam", sourceLabel: "本機教材式", note: "由 F=PR/PV2 改寫；PV2 為連接氣罩導管動壓。" },
       { name: "氣罩壓力損失係數 F", expression: "PR/PV2", sourceType: "exam", sourceLabel: "本機教材式" },
       { name: "流入係數 Ce", expression: "sqrt(PV2/abs(PS2))", sourceType: "exam", sourceLabel: "本機教材式", note: "由 Ce^2=PV2/|PS2| 改寫；PS2 為連接氣罩導管靜壓。" },
       { name: "動壓換風速 m/s", expression: "4.04*sqrt(PV)", sourceType: "exam", sourceLabel: "通風常用式", note: "PV 以 mmH2O 計；若題目用 Pa，先統一單位。" },
+      { name: "風管風量 Q", expression: "V*A", sourceType: "exam", sourceLabel: "局排常用式", note: "只在題目給風速與風管尺寸時用；圓管 A=3.1416*d^2/4，矩形 A=長*寬，單位先換成 m2。" },
     ],
   },
   {

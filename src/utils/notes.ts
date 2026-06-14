@@ -2,9 +2,16 @@ import type { FavoriteItem, NoteItem } from "../types/navigation";
 
 const notesKey = "osh-law-navigator:notes";
 
+const isAutoFormulaNote = (content: string) => /^\s*【[^】]+】\s*\n\s*〔[^〕]+〕/.test(content);
+
 export const loadNotes = (): NoteItem[] => {
   try {
-    return JSON.parse(localStorage.getItem(notesKey) || "[]") as NoteItem[];
+    const notes = JSON.parse(localStorage.getItem(notesKey) || "[]") as NoteItem[];
+    const cleanedNotes = notes.map((note) => isAutoFormulaNote(note.content) ? { ...note, content: "" } : note);
+    if (cleanedNotes.some((note, index) => note.content !== notes[index]?.content)) {
+      localStorage.setItem(notesKey, JSON.stringify(cleanedNotes));
+    }
+    return cleanedNotes;
   } catch {
     return [];
   }

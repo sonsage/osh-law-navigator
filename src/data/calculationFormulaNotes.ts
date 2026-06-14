@@ -53,6 +53,15 @@ export const calculationFormulaGroups: CalculationFormulaGroup[] = [
     ],
   },
   {
+    title: "有機溶劑法規附表",
+    formulas: [
+      { name: "第一種有機溶劑容許消費量 g", expression: "作業場所氣積m3/15", sourceType: "law", sourceLabel: "法規附表原式", note: "有機溶劑中毒預防規則附表二；氣積不含地面 4m 以上，高於 150m3 以 150m3 計。" },
+      { name: "第二種有機溶劑容許消費量 g", expression: "2*作業場所氣積m3/5", sourceType: "law", sourceLabel: "法規附表原式", note: "有機溶劑中毒預防規則附表二；氣積不含地面 4m 以上，高於 150m3 以 150m3 計。" },
+      { name: "第三種有機溶劑容許消費量 g", expression: "3*作業場所氣積m3/2", sourceType: "law", sourceLabel: "法規附表原式", note: "有機溶劑中毒預防規則附表二；氣積不含地面 4m 以上，高於 150m3 以 150m3 計。" },
+      { name: "通風不充分開口面積判定", expression: "對外開口面積/底面積*100", sourceType: "law", sourceLabel: "法規文字換算", note: "低於 5% 或全面積未達 3% 常見於有機溶劑作業場所判定題；先看題目採哪一個面積基準。" },
+    ],
+  },
+  {
     title: "綜合溫度熱指數 WBGT",
     formulas: [
       { name: "室內或室外無日曬", expression: "0.7*自然濕球溫度+0.3*黑球溫度", sourceType: "law", sourceLabel: "法規原式" },
@@ -73,6 +82,20 @@ export const calculationFormulaGroups: CalculationFormulaGroup[] = [
       { name: "捕集效率%", expression: "捕集量/產生量*100", sourceType: "conversion", sourceLabel: "文字換算式" },
       { name: "稀釋後濃度，完全混合", expression: "產生率/通風量", sourceType: "conversion", sourceLabel: "概念換算式", note: "僅作概念換算；職安乙級法規題優先查有機、特化、粉塵等原條文。" },
       { name: "兩風量混合濃度", expression: "(Q1*C1+Q2*C2)/(Q1+Q2)", sourceType: "conversion", sourceLabel: "概念換算式" },
+      { name: "氣罩壓力損失 PR", expression: "F*PV2", sourceType: "exam", sourceLabel: "本機教材式", note: "由 F=PR/PV2 改寫；PV2 為連接氣罩導管動壓。" },
+      { name: "氣罩壓力損失係數 F", expression: "PR/PV2", sourceType: "exam", sourceLabel: "本機教材式" },
+      { name: "流入係數 Ce", expression: "sqrt(PV2/abs(PS2))", sourceType: "exam", sourceLabel: "本機教材式", note: "由 Ce^2=PV2/|PS2| 改寫；PS2 為連接氣罩導管靜壓。" },
+      { name: "動壓換風速 m/s", expression: "4.04*sqrt(PV)", sourceType: "exam", sourceLabel: "通風常用式", note: "PV 以 mmH2O 計；若題目用 Pa，先統一單位。" },
+    ],
+  },
+  {
+    title: "機械安全防護",
+    formulas: [
+      { name: "光電式安全裝置安全距離 D", expression: "1.6*(T1+Ts)+C", sourceType: "law", sourceLabel: "法規/標準講義式", note: "D 為安全距離；T1 為延遲時間，Ts 為急速停止時間，C 為追加距離。題目單位通常要先統一成 mm、sec。" },
+      { name: "無追加距離時安全距離 D", expression: "1.6*(T1+Ts)", sourceType: "exam", sourceLabel: "考場換算式", note: "題目未給 C 才用；若題目或法規附表給 C，必須帶入 C。" },
+      { name: "安全距離反求停止時間", expression: "(D-C)/1.6-T1", sourceType: "exam", sourceLabel: "考場換算式", note: "用來反求 Ts；D、C 單位要和 1.6 的速度基準一致。" },
+      { name: "雙手操作同時性判定", expression: "abs(t左-t右)", sourceType: "law", sourceLabel: "法規文字換算", note: "左右手動作時間差須在 0.5 秒以內；考題常問是否符合雙手操作式安全裝置。" },
+      { name: "安全一行程判定", expression: "按下後只完成1行程", sourceType: "law", sourceLabel: "法規文字重點", note: "不是數值計算式；重點是全轉式離合器按下後不可中途停止，需搭配安全一行程概念記。" },
     ],
   },
   {

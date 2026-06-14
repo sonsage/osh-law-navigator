@@ -166,11 +166,6 @@ export function NotesPage({
             )}
             {savedMessages[note.id] && <p className="voice-status">{savedMessages[note.id]}</p>}
             <div className="favorite-card-actions">
-              {note.searchUrl && (
-                <a className="button button-primary app-link-button" href={note.searchUrl} target="_blank" rel="noreferrer">
-                  重新搜尋
-                </a>
-              )}
               <button
                 className="button note-save-button"
                 type="button"

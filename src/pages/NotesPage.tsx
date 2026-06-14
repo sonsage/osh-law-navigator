@@ -1,148 +1,5 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
-import katex from "katex";
-import "katex/dist/katex.min.css";
+import { useEffect, useMemo, useState } from "react";
 import type { NoteItem } from "../types/navigation";
-
-const noteTemplates = [
-  {
-    id: "noise-exposure",
-    label: "插入噪音公式範本",
-    content: `1. 容許暴露時間公式 (T)
-
-當噪音在 80 分貝以上時，音壓級每增加 5 分貝，容許暴露時間即減半。
-
-$$
-T = \\frac{8}{2^{\\frac{L-90}{5}}}
-$$
-
-• L：測得的噪音音壓級（dBA）。
-• T：該音壓級下的容許暴露時間（小時）。
-
-速記對應表：90dB → 8小時；95dB → 4小時；100dB → 2小時；85dB → 16小時`,
-  },
-  {
-    id: "safety-distance",
-    label: "插入安全距離公式",
-    content: `安全距離公式
-
-$$
-D = 1.6 \\times T_m
-$$
-
-• D：安全距離。
-• T_m：手指離開按鈕至滑塊抵達下死點之最大時間。`,
-  },
-];
-
-const looksLikeFormula = (line: string) => {
-  const trimmed = line.trim();
-  if (!trimmed || trimmed.startsWith("$$") || trimmed.startsWith("|")) {
-    return false;
-  }
-
-  return /[A-Za-z][A-Za-z0-9_{}\\]*\s*=/.test(trimmed)
-    && /[=+\-*/^_{}()[\]\\]/.test(trimmed)
-    && !/[：:。；;]/.test(trimmed);
-};
-
-const normalizeFormulaLine = (line: string) => {
-  const trimmed = line.trim();
-  const compact = trimmed.replace(/\s+/g, "");
-  if (
-    (/^T\s*=\s*8\s*\/\s*2/i.test(trimmed) && /L\s*-\s*90/.test(trimmed))
-    || (/8T=?L-?90/i.test(compact) && /25/.test(compact))
-    || (/通用公式/.test(trimmed) && /噪音|分貝|dB/i.test(trimmed))
-  ) {
-    return "T = \\frac{8}{2^{\\frac{L-90}{5}}}";
-  }
-
-  return trimmed
-    .replace(/T_\{m\}/g, "T_m")
-    .replace(/T_m/g, "T_m")
-    .replace(/\b1\s*\/\s*2\b/g, "\\frac{1}{2}")
-    .replace(/\b1\s*\/\s*N\b/g, "\\frac{1}{N}")
-    .replace(/\s+\*\s+/g, " \\times ")
-    .replace(/\s*->\s*/g, " \\to ");
-};
-
-const renderFormula = (formula: string) => {
-  const html = katex.renderToString(normalizeFormulaLine(formula), {
-    displayMode: true,
-    throwOnError: false,
-  });
-
-  return <div className="note-formula" dangerouslySetInnerHTML={{ __html: html }} />;
-};
-
-const renderTextLine = (line: string, key: string) => {
-  const text = line.trim();
-  if (!text) {
-    return null;
-  }
-
-  if (/^\d+[.、]\s*/.test(text)) {
-    return <h4 className="note-preview-title" key={key}>{text}</h4>;
-  }
-
-  if (/^[•●\-]\s*/.test(text)) {
-    return <p className="note-preview-bullet" key={key}>{text.replace(/^[•●\-]\s*/, "")}</p>;
-  }
-
-  if (text.includes("速記") || text.includes("對應表")) {
-    return <p className="note-preview-memory" key={key}>{text}</p>;
-  }
-
-  return <p className="note-preview-text" key={key}>{text}</p>;
-};
-
-const renderNotePreview = (content: string) => {
-  const lines = content.split("\n");
-  const blocks: ReactNode[] = [];
-  let textBuffer: string[] = [];
-  let mathBuffer: string[] = [];
-  let inMathBlock = false;
-
-  const flushText = () => {
-    textBuffer
-      .map((line, index) => renderTextLine(line, `text-${blocks.length}-${index}`))
-      .filter(Boolean)
-      .forEach((block) => blocks.push(block));
-    textBuffer = [];
-  };
-
-  lines.forEach((line, index) => {
-    if (line.trim().startsWith("$$")) {
-      if (inMathBlock) {
-        blocks.push(<div key={`math-${index}`}>{renderFormula(mathBuffer.join(" "))}</div>);
-        mathBuffer = [];
-      } else {
-        flushText();
-      }
-      inMathBlock = !inMathBlock;
-      return;
-    }
-
-    if (inMathBlock) {
-      mathBuffer.push(line);
-      return;
-    }
-
-    if (looksLikeFormula(line)) {
-      flushText();
-      blocks.push(<div key={`formula-${index}`}>{renderFormula(line)}</div>);
-      return;
-    }
-
-    textBuffer.push(line);
-  });
-
-  if (inMathBlock && mathBuffer.length > 0) {
-    blocks.push(<div key="math-open">{renderFormula(mathBuffer.join(" "))}</div>);
-  }
-  flushText();
-
-  return blocks;
-};
 
 export function NotesPage({
   notes,
@@ -202,21 +59,11 @@ export function NotesPage({
     }, 1800);
   };
 
-  const insertTemplate = (note: NoteItem, templateContent: string) => {
-    setDrafts((current) => {
-      const original = current[note.id] ?? note.content;
-      const nextContent = original.trim()
-        ? `${original.trim()}\n\n${templateContent}`
-        : templateContent;
-      return { ...current, [note.id]: nextContent };
-    });
-  };
-
   return (
     <div className="stack">
       <section className="card">
         <h2>我的筆記</h2>
-        <p>把 AI 搜尋結果摘要、公式、考點心得或易錯題整理到這裡。</p>
+        <p>整理 AI 摘要、考點心得與易錯提醒。公式或圖片先保留在原搜尋結果，筆記只記考試重點。</p>
       </section>
 
       {notes.length > 0 && (
@@ -227,7 +74,7 @@ export function NotesPage({
               type="search"
               value={noteSearch}
               onChange={(event) => setNoteSearch(event.target.value)}
-              placeholder="輸入關鍵字、公式名稱或搜尋句"
+              placeholder="輸入關鍵字、考點或搜尋句"
             />
           </label>
         </section>
@@ -244,7 +91,6 @@ export function NotesPage({
       ) : filteredNotes.map((note) => {
         const draft = drafts[note.id] ?? note.content;
         const hasUnsavedChange = draft !== note.content;
-        const previewContent = renderNotePreview(draft);
 
         return (
           <section className="card favorite-search-card" key={note.id}>
@@ -256,33 +102,14 @@ export function NotesPage({
             </div>
             <label className="note-editor">
               <strong>筆記內容</strong>
-              <span className="note-editor-hint">上方是純文字編輯區；公式會在下方「筆記預覽」顯示。</span>
-              <div className="note-template-actions">
-                {noteTemplates.map((template) => (
-                  <button
-                    className="button note-template-button"
-                    key={template.id}
-                    type="button"
-                    onClick={() => insertTemplate(note, template.content)}
-                  >
-                    {template.label}
-                  </button>
-                ))}
-              </div>
               <textarea
                 value={draft}
                 onChange={(event) => {
                   setDrafts((current) => ({ ...current, [note.id]: event.target.value }));
                 }}
-                placeholder={"可貼上 AI 摘要、公式、考點心得或易錯提醒。\n\n公式可直接貼：\nT_{m} = (1/2 + 1/N) * T\n\n也可用 LaTeX：\n$$\nT = \\frac{8}{2^{(L-90)/5}}\n$$"}
+                placeholder={"用自己的話記考點，例如：\n噪音：90dB 8小時、95dB 4小時、100dB 2小時。\n雙手啟動式：全轉式離合器，按下後不可中途停止。"}
               />
             </label>
-            {draft.trim() && (
-              <div className="note-preview">
-                <strong>筆記預覽</strong>
-                {previewContent}
-              </div>
-            )}
             {savedMessages[note.id] && <p className="voice-status">{savedMessages[note.id]}</p>}
             <div className="favorite-card-actions">
               <button

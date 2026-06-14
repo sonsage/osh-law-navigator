@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { LicenseNode } from "../components/LicenseNode";
 import { calculationFormulaGroups } from "../data/calculationFormulaNotes";
 import type { NoteItem } from "../types/navigation";
+import { loadLicenseAccess } from "../utils/licenseCode";
 
 export function NotesPage({
   notes,
@@ -15,6 +17,8 @@ export function NotesPage({
   const [savedMessages, setSavedMessages] = useState<Record<string, string>>({});
   const [noteSearch, setNoteSearch] = useState("");
   const [formulaSearch, setFormulaSearch] = useState("");
+  const [licensed, setLicensed] = useState(() => loadLicenseAccess().unlocked);
+  const formulaCount = calculationFormulaGroups.reduce((sum, group) => sum + group.formulas.length, 0);
 
   useEffect(() => {
     setDrafts((current) => {
@@ -83,6 +87,31 @@ export function NotesPage({
     }, 1800);
   };
 
+  if (!licensed) {
+    return (
+      <div className="stack">
+        <section className="card">
+          <h2>我的筆記</h2>
+          <p>公式橫式庫、收藏搜尋與個人筆記是授權功能。AI 搜尋可先用來找資料，真正的讀書整理從收藏與筆記開始。</p>
+        </section>
+
+        <section className="card formula-note-card">
+          <div className="formula-note-heading">
+            <div>
+              <small>授權功能</small>
+              <h2>解鎖公式、收藏與筆記</h2>
+            </div>
+            <span>{formulaCount} 式</span>
+          </div>
+          <p className="formula-source-warning">
+            這裡整理的是分散在法規、附表與考題中的考場橫式。授權後可搜尋公式、從收藏建立筆記，依自己的弱點整理複習。
+          </p>
+          <LicenseNode onAccessChange={setLicensed} />
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="stack">
       <section className="card">
@@ -96,7 +125,7 @@ export function NotesPage({
             <small>固定筆記</small>
             <h2>考場公式橫式筆記</h2>
           </div>
-          <span>{calculationFormulaGroups.reduce((sum, group) => sum + group.formulas.length, 0)} 式</span>
+          <span>{formulaCount} 式</span>
         </div>
         <label className="formula-search-field">
           <strong>搜尋公式</strong>

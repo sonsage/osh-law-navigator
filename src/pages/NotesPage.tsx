@@ -1,3 +1,7 @@
+import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
+import "katex/dist/katex.min.css";
 import type { NoteItem } from "../types/navigation";
 
 export function NotesPage({
@@ -39,9 +43,17 @@ export function NotesPage({
             <textarea
               value={note.content}
               onChange={(event) => onUpdate(note, event.target.value)}
-              placeholder="可貼上 AI 摘要、考點心得或易錯提醒。"
+              placeholder={"可貼上 AI 摘要、考點心得或易錯提醒。\n\n公式可用：\n$$\nT = \\frac{8}{2^{(L-90)/5}}\n$$"}
             />
           </label>
+          {note.content.trim() && (
+            <div className="note-preview">
+              <strong>筆記預覽</strong>
+              <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                {note.content}
+              </ReactMarkdown>
+            </div>
+          )}
           <div className="favorite-card-actions">
             {note.searchUrl && (
               <a className="button button-primary app-link-button" href={note.searchUrl} target="_blank" rel="noreferrer">

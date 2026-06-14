@@ -1562,6 +1562,48 @@ select {
   resize: vertical;
 }
 
+.note-preview {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #dbe3ee;
+  border-radius: 8px;
+  padding: 12px;
+  background: #f8fbff;
+}
+
+.note-preview > strong {
+  color: #12365f;
+}
+
+.note-preview p,
+.note-preview li {
+  color: #263347;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.note-preview p {
+  margin: 0 0 8px;
+}
+
+.note-preview ul,
+.note-preview ol {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+
+.note-preview .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 10px 0;
+  padding: 8px 0;
+}
+
+.note-preview .katex {
+  color: #082f57;
+  font-size: 1.08em;
+}
+
 .favorite-card-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));

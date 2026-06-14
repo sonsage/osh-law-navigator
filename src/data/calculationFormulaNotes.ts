@@ -91,9 +91,11 @@ export const calculationFormulaGroups: CalculationFormulaGroup[] = [
   {
     title: "機械安全防護",
     formulas: [
-      { name: "光電式安全裝置安全距離 D", expression: "1.6*(T1+Ts)+C", sourceType: "law", sourceLabel: "法規/標準講義式", note: "D 為安全距離；T1 為延遲時間，Ts 為急速停止時間，C 為追加距離。題目單位通常要先統一成 mm、sec。" },
-      { name: "無追加距離時安全距離 D", expression: "1.6*(T1+Ts)", sourceType: "exam", sourceLabel: "考場換算式", note: "題目未給 C 才用；若題目或法規附表給 C，必須帶入 C。" },
-      { name: "安全距離反求停止時間", expression: "(D-C)/1.6-T1", sourceType: "exam", sourceLabel: "考場換算式", note: "用來反求 Ts；D、C 單位要和 1.6 的速度基準一致。" },
+      { name: "安全一行程雙手操作安全距離 D", expression: "1.6*(Tl+Ts)", sourceType: "law", sourceLabel: "機械設備器具安全標準第8條", note: "D 以毫米表示；Tl、Ts 以毫秒表示。安裝距離應超過計算值。" },
+      { name: "雙手起動式安全距離 D", expression: "1.6*Tm", sourceType: "law", sourceLabel: "機械設備器具安全標準第8條", note: "D 以毫米表示；Tm 為手指離開操作部至滑塊等抵達下死點之最大時間，單位毫秒。" },
+      { name: "雙手起動式 Tm", expression: "(1/2+1/離合器嚙合處數目)*曲柄軸旋轉一周時間", sourceType: "law", sourceLabel: "機械設備器具安全標準第8條", note: "曲柄軸旋轉一周時間以毫秒代入。" },
+      { name: "光電式安全裝置安全距離 D", expression: "1.6*(Tl+Ts)+C", sourceType: "law", sourceLabel: "機械設備器具安全標準第8條", note: "D 以毫米表示；Tl、Ts 以毫秒表示；C 依連續遮光幅查表。" },
+      { name: "光電式反求停止時間 Ts", expression: "(D-C)/1.6-Tl", sourceType: "exam", sourceLabel: "考場換算式", note: "用來反求 Ts；D、C 用毫米，Tl、Ts 用毫秒。" },
       { name: "雙手操作同時性判定", expression: "abs(t左-t右)", sourceType: "law", sourceLabel: "法規文字換算", note: "左右手動作時間差須在 0.5 秒以內；考題常問是否符合雙手操作式安全裝置。" },
       { name: "安全一行程判定", expression: "按下後只完成1行程", sourceType: "law", sourceLabel: "法規文字重點", note: "不是數值計算式；重點是全轉式離合器按下後不可中途停止，需搭配安全一行程概念記。" },
     ],

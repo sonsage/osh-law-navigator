@@ -1,7 +1,3 @@
-export function buildGoogleSearchUrl(query: string): string {
-  return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-}
-
 export function buildGoogleAIModeSearchUrl(query: string): string {
   return `https://www.google.com/search?udm=50&q=${encodeURIComponent(query)}`;
 }

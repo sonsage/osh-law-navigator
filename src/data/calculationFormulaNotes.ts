@@ -73,6 +73,10 @@ export const calculationFormulaGroups: CalculationFormulaGroup[] = [
   {
     title: "整體換氣",
     formulas: [
+      { name: "整體換氣率 G", expression: "Q/V", sourceType: "exam", sourceLabel: "整體換氣基本式", note: "Q 為換氣量 m3/min，V 為空間體積 m3，G 單位為 1/min。這是整體換氣題最先看的基本式。" },
+      { name: "已知 G 求換氣量 Q", expression: "G*V", sourceType: "exam", sourceLabel: "整體換氣基本式", note: "Q 為 m3/min；題目若給每小時換氣次數 ACH，先用 G=ACH/60。" },
+      { name: "G 換 ACH", expression: "G*60", sourceType: "exam", sourceLabel: "整體換氣基本式", note: "ACH 為每小時換氣次數；G 若為 1/min，乘 60。" },
+      { name: "ACH 換 G", expression: "ACH/60", sourceType: "exam", sourceLabel: "整體換氣基本式", note: "G 為 1/min。" },
       { name: "換氣次數 ACH，Q 為 m3/hr", expression: "Q/空間體積", sourceType: "conversion", sourceLabel: "考場換算式", note: "題目問每小時換氣次數時用；Q 若為 m3/min，先乘 60。" },
       { name: "已知 ACH 求風量 Q", expression: "ACH*空間體積/60", sourceType: "conversion", sourceLabel: "考場換算式", note: "算出 Q 為 m3/min。若題目要求 m3/hr，使用 ACH*空間體積。" },
       { name: "完全混合稀釋濃度", expression: "產生率/通風量", sourceType: "conversion", sourceLabel: "概念換算式", note: "只在題目明確要用完全混合稀釋概念時用；法規題先看附表或條文。" },

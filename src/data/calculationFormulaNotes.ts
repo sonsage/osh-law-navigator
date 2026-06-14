@@ -214,6 +214,11 @@ export const calculationFormulaGroups: CalculationFormulaGroup[] = [
     title: "火災、爆炸與單位",
     formulas: [
       { name: "爆炸下限百分比", expression: "可燃氣體體積/混合氣體總體積*100", sourceType: "conversion", sourceLabel: "一般換算式" },
+      { name: "混合可燃性氣體 LEL", expression: "100/(V1/LEL1+V2/LEL2+V3/LEL3)", sourceType: "exam", sourceLabel: "Le Chatelier 混合式", note: "V1、V2、V3 為各可燃性氣體在純可燃性氣體總量中所占體積百分比；LEL1、LEL2、LEL3 也用百分比代入。" },
+      { name: "混合 LEL 通式", expression: "100/sum(Vi/LELi)", sourceType: "exam", sourceLabel: "Le Chatelier 混合式", note: "適用多成分混合可燃性氣體；各 Vi 加總應為 100。" },
+      { name: "第177條 LEL 30% 退避判定", expression: "現場濃度/LEL*100", sourceType: "law", sourceLabel: "設施規則第177條", note: "蒸氣或氣體濃度達爆炸下限值 30% 以上，應即刻退避至安全場所、停止煙火與點火源機具，並加強通風。" },
+      { name: "第177條 30% 目標濃度", expression: "0.3*LEL", sourceType: "law", sourceLabel: "設施規則第177條", note: "條文本身是判定門檻，不是通風量公式；LEL 若用百分比，結果也是百分比濃度。" },
+      { name: "防爆最小理論通風量 Q", expression: "24.45*10^3*W/(60*0.3*LEL*10^4*M)", sourceType: "exam", sourceLabel: "第177條延伸換算", note: "非第177條原文公式；用於把每小時消耗量估成控制於 LEL 30% 以下的理論通風量。Q=m3/min，W=g/hr，M=分子量，LEL=百分比。" },
       { name: "稀釋後濃度", expression: "原濃度*原體積/稀釋後總體積", sourceType: "conversion", sourceLabel: "一般換算式" },
       { name: "LEL%", expression: "實際濃度/爆炸下限*100", sourceType: "conversion", sourceLabel: "一般換算式" },
       { name: "蒸氣密度，空氣=1", expression: "分子量/29", sourceType: "conversion", sourceLabel: "一般換算式" },

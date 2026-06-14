@@ -108,7 +108,7 @@ export function NotesPage({
           />
         </label>
         <p className="formula-source-warning">
-          先看題目問法規判定或計算。法規題以條文、附表、門檻數字為準；延伸換算只在題目明確給數值時使用。
+          考場先抓題目給的數字與單位，搜尋關鍵字後直接套橫式。看不懂法規分類也沒關係，先會代入、會判斷門檻，目標是穩穩拿基本分。
         </p>
         {filteredFormulaGroups.length === 0 ? (
           <p className="formula-empty-message">找不到符合「{formulaSearch}」的公式。</p>

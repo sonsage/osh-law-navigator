@@ -46,7 +46,10 @@ export const buildFormulaNoteContent = (favorite: FavoriteItem) => {
 
   return groups.map((group) => [
     `【${group.title}】`,
-    ...group.formulas.map((formula) => `${formula.name}：${formula.expression}${formula.note ? `（${formula.note}）` : ""}`),
+    ...group.formulas.map((formula) => {
+      const sourcePrefix = formula.sourceLabel ? `〔${formula.sourceLabel}〕` : "";
+      return `${sourcePrefix}${formula.name}：${formula.expression}${formula.note ? `（${formula.note}）` : ""}`;
+    }),
   ].join("\n")).join("\n\n");
 };
 

@@ -57,6 +57,8 @@ export function NotesPage({
           group.title,
           formula.name,
           formula.expression,
+          formula.sourceLabel ?? "",
+          formula.sourceType ?? "",
           formula.note ?? "",
         ].some((value) => value.toLowerCase().includes(keyword))),
       }))
@@ -106,10 +108,14 @@ export function NotesPage({
           />
         </label>
         <div className="formula-tip-list">
+          <span>法規原式優先</span>
           <span>log=log10</span>
           <span>百分比先除以 100</span>
           <span>先統一單位再按</span>
         </div>
+        <p className="formula-source-warning">
+          有機、特化、粉塵等法規或附表若有明定公式、控制風速、換氣條件，考場以法規原式為準；本區的文字換算式只作快速換算輔助。
+        </p>
         {filteredFormulaGroups.length === 0 ? (
           <p className="formula-empty-message">找不到符合「{formulaSearch}」的公式。</p>
         ) : (
@@ -123,7 +129,14 @@ export function NotesPage({
                 <div className="formula-row-list">
                   {group.formulas.map((formula) => (
                     <article className="formula-row" key={`${group.title}-${formula.name}`}>
-                      <strong>{formula.name}</strong>
+                      <div className="formula-row-heading">
+                        <strong>{formula.name}</strong>
+                        {formula.sourceLabel && (
+                          <span className={`formula-source formula-source-${formula.sourceType ?? "conversion"}`}>
+                            {formula.sourceLabel}
+                          </span>
+                        )}
+                      </div>
                       <code>{formula.expression}</code>
                       {formula.note && <small>{formula.note}</small>}
                     </article>

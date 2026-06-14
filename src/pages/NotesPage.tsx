@@ -90,7 +90,7 @@ export function NotesPage({
     content: drafts[note.id] ?? note.content,
   }));
 
-  const buildNotebookPrintHtml = () => {
+  const buildNotebookPrintHtml = (previewMode: boolean) => {
     const snapshot = getNotebookSnapshot();
     const generatedAt = new Date().toLocaleString("zh-TW");
     const body = snapshot.map((note, index) => `
@@ -114,20 +114,31 @@ export function NotesPage({
   <style>
     @page { size: A4; margin: 16mm; }
     * { box-sizing: border-box; }
-    body { margin: 0; color: #12365f; font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif; line-height: 1.55; }
-    header { border-bottom: 2px solid #12365f; padding-bottom: 12px; margin-bottom: 18px; }
-    h1 { margin: 0 0 6px; font-size: 24px; }
-    .summary { color: #5d6b80; font-size: 13px; font-weight: 700; }
-    .note { break-inside: avoid; border: 1px solid #d7e1ec; border-radius: 8px; padding: 14px; margin-bottom: 14px; }
-    .meta { color: #5d6b80; font-size: 12px; font-weight: 800; }
-    h2 { margin: 6px 0 10px; font-size: 18px; }
-    dl { display: grid; grid-template-columns: 64px 1fr; gap: 6px 10px; margin: 0 0 10px; padding: 10px; border-radius: 8px; background: #eef4fb; }
+    html { background: #f4f7fb; }
+    body { max-width: ${previewMode ? "760px" : "none"}; margin: ${previewMode ? "0 auto" : "0"}; padding: ${previewMode ? "16px" : "0"}; color: #12365f; font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif; font-size: ${previewMode ? "19px" : "13px"}; line-height: 1.65; }
+    header { border-bottom: 2px solid #12365f; padding-bottom: ${previewMode ? "16px" : "12px"}; margin-bottom: ${previewMode ? "18px" : "18px"}; }
+    h1 { margin: 0 0 6px; font-size: ${previewMode ? "30px" : "24px"}; }
+    .summary { color: #5d6b80; font-size: ${previewMode ? "15px" : "13px"}; font-weight: 700; }
+    .note { break-inside: avoid; border: 1px solid #d7e1ec; border-radius: 8px; padding: ${previewMode ? "16px" : "14px"}; margin-bottom: 14px; background: #ffffff; }
+    .meta { color: #5d6b80; font-size: ${previewMode ? "14px" : "12px"}; font-weight: 800; }
+    h2 { margin: 6px 0 10px; font-size: ${previewMode ? "23px" : "18px"}; }
+    dl { display: grid; grid-template-columns: ${previewMode ? "76px" : "64px"} 1fr; gap: 6px 10px; margin: 0 0 12px; padding: 12px; border-radius: 8px; background: #eef4fb; }
     dt { font-weight: 900; }
     dd { margin: 0; color: #263347; overflow-wrap: anywhere; }
-    pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: #172033; font: inherit; font-weight: 700; }
-    .print-actions { display: flex; gap: 10px; margin-bottom: 16px; }
-    .print-actions button { min-height: 38px; border: 0; border-radius: 8px; padding: 0 14px; color: #fff; background: #12365f; font-weight: 900; }
-    @media print { .print-actions { display: none; } }
+    pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: #172033; font: inherit; font-weight: 750; }
+    .print-actions { position: sticky; top: 0; display: flex; gap: 10px; margin: -16px -16px 16px; padding: 10px 16px; background: #ffffff; border-bottom: 1px solid #d7e1ec; }
+    .print-actions button { min-height: 42px; border: 0; border-radius: 8px; padding: 0 14px; color: #fff; background: #12365f; font-weight: 900; font-size: 16px; }
+    @media print {
+      html { background: #ffffff; }
+      body { max-width: none; margin: 0; padding: 0; font-size: 13px; line-height: 1.55; }
+      h1 { font-size: 24px; }
+      h2 { font-size: 18px; }
+      .summary { font-size: 13px; }
+      .note { padding: 14px; background: #ffffff; }
+      .meta { font-size: 12px; }
+      dl { grid-template-columns: 64px 1fr; }
+      .print-actions { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -154,7 +165,7 @@ export function NotesPage({
     }
 
     preview.document.open();
-    preview.document.write(buildNotebookPrintHtml());
+    preview.document.write(buildNotebookPrintHtml(!printNow));
     preview.document.close();
 
     if (printNow) {

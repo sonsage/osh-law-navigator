@@ -7,13 +7,16 @@ import { loadLicenseAccess } from "../utils/licenseCode";
 export function NotesPage({
   notes,
   onRemove,
+  onRemoveAll,
   onUpdate,
 }: {
   notes: NoteItem[];
   onRemove: (note: NoteItem) => void;
+  onRemoveAll: () => void;
   onUpdate: (note: NoteItem, content: string) => void;
 }) {
   const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [notebookMessage, setNotebookMessage] = useState("");
   const [savedMessages, setSavedMessages] = useState<Record<string, string>>({});
   const [noteSearch, setNoteSearch] = useState("");
   const [formulaSearch, setFormulaSearch] = useState("");
@@ -75,6 +78,114 @@ export function NotesPage({
     }
   };
 
+  const escapeHtml = (value: string) => value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+  const getNotebookSnapshot = () => notes.map((note) => ({
+    ...note,
+    content: drafts[note.id] ?? note.content,
+  }));
+
+  const buildNotebookPrintHtml = () => {
+    const snapshot = getNotebookSnapshot();
+    const generatedAt = new Date().toLocaleString("zh-TW");
+    const body = snapshot.map((note, index) => `
+      <article class="note">
+        <div class="meta">#${index + 1}　${escapeHtml(note.sourceLabel)}</div>
+        <h2>${escapeHtml(note.title)}</h2>
+        <dl>
+          <dt>關鍵字</dt><dd>${escapeHtml(note.keyword)}</dd>
+          <dt>搜尋句</dt><dd>${escapeHtml(note.searchQuery)}</dd>
+        </dl>
+        <pre>${escapeHtml(note.content.trim() || "（空白筆記）")}</pre>
+      </article>
+    `).join("");
+
+    return `<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>我的筆記 PDF 預覽</title>
+  <style>
+    @page { size: A4; margin: 16mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #12365f; font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif; line-height: 1.55; }
+    header { border-bottom: 2px solid #12365f; padding-bottom: 12px; margin-bottom: 18px; }
+    h1 { margin: 0 0 6px; font-size: 24px; }
+    .summary { color: #5d6b80; font-size: 13px; font-weight: 700; }
+    .note { break-inside: avoid; border: 1px solid #d7e1ec; border-radius: 8px; padding: 14px; margin-bottom: 14px; }
+    .meta { color: #5d6b80; font-size: 12px; font-weight: 800; }
+    h2 { margin: 6px 0 10px; font-size: 18px; }
+    dl { display: grid; grid-template-columns: 64px 1fr; gap: 6px 10px; margin: 0 0 10px; padding: 10px; border-radius: 8px; background: #eef4fb; }
+    dt { font-weight: 900; }
+    dd { margin: 0; color: #263347; overflow-wrap: anywhere; }
+    pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; color: #172033; font: inherit; font-weight: 700; }
+    .print-actions { display: flex; gap: 10px; margin-bottom: 16px; }
+    .print-actions button { min-height: 38px; border: 0; border-radius: 8px; padding: 0 14px; color: #fff; background: #12365f; font-weight: 900; }
+    @media print { .print-actions { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="print-actions"><button onclick="window.print()">輸出 PDF</button></div>
+  <header>
+    <h1>我的筆記</h1>
+    <div class="summary">共 ${snapshot.length} 筆｜產生時間：${escapeHtml(generatedAt)}</div>
+  </header>
+  ${body}
+</body>
+</html>`;
+  };
+
+  const openNotebookPdf = (printNow: boolean) => {
+    if (notes.length === 0) {
+      setNotebookMessage("目前沒有筆記可輸出。");
+      return;
+    }
+
+    const preview = window.open("", "_blank");
+    if (!preview) {
+      setNotebookMessage("瀏覽器封鎖新視窗，請允許彈出視窗後再試。");
+      return;
+    }
+
+    preview.document.open();
+    preview.document.write(buildNotebookPrintHtml());
+    preview.document.close();
+
+    if (printNow) {
+      window.setTimeout(() => {
+        preview.focus();
+        preview.print();
+      }, 300);
+    }
+  };
+
+  const saveAllDrafts = () => {
+    notes.forEach((note) => {
+      const draft = drafts[note.id] ?? note.content;
+      if (draft !== note.content) {
+        onUpdate(note, draft);
+      }
+    });
+    setNotebookMessage("已儲存全部筆記。");
+    window.setTimeout(() => setNotebookMessage(""), 1800);
+  };
+
+  const confirmRemoveAll = () => {
+    if (notes.length === 0) return;
+    if (window.confirm(`確定刪除全部 ${notes.length} 筆筆記？此動作無法復原。`)) {
+      onRemoveAll();
+      setDrafts({});
+      setNotebookMessage("已刪除全部筆記。");
+      window.setTimeout(() => setNotebookMessage(""), 1800);
+    }
+  };
+
   const saveDraft = (note: NoteItem) => {
     onUpdate(note, drafts[note.id] ?? "");
     setSavedMessages((current) => ({ ...current, [note.id]: "已儲存筆記。" }));
@@ -117,6 +228,28 @@ export function NotesPage({
       <section className="card">
         <h2>我的筆記</h2>
         <p>整理 AI 摘要、考點心得與易錯提醒。計算題公式已整理成考場可按的橫式，個人筆記可從收藏搜尋建立。</p>
+      </section>
+
+      <section className="card notebook-actions-card">
+        <div className="note-search-heading">
+          <strong>全部筆記工具</strong>
+          <span>{notes.length} 筆</span>
+        </div>
+        <div className="notebook-action-grid">
+          <button className="button button-ghost" type="button" disabled={notes.length === 0} onClick={() => openNotebookPdf(false)}>
+            預覽 PDF
+          </button>
+          <button className="button button-primary" type="button" disabled={notes.length === 0} onClick={() => openNotebookPdf(true)}>
+            輸出 PDF
+          </button>
+          <button className="button note-save-button" type="button" disabled={notes.length === 0} onClick={saveAllDrafts}>
+            儲存全部
+          </button>
+          <button className="button notebook-delete-button" type="button" disabled={notes.length === 0} onClick={confirmRemoveAll}>
+            刪除全部
+          </button>
+        </div>
+        {notebookMessage && <p className="voice-status">{notebookMessage}</p>}
       </section>
 
       <section className="card formula-note-card">

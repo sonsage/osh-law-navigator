@@ -1609,6 +1609,32 @@ select {
   margin-top: 10px;
 }
 
+.notebook-actions-card {
+  display: grid;
+  gap: 10px;
+}
+
+.notebook-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.notebook-action-grid .button {
+  min-height: 44px;
+}
+
+.notebook-action-grid .button:disabled {
+  cursor: not-allowed;
+  color: #66758a;
+  background: #e4ebf3;
+}
+
+.notebook-delete-button {
+  color: #ffffff;
+  background: #a4333a;
+}
+
 .operation-filter-row {
   display: flex;
   flex-wrap: wrap;

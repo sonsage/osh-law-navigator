@@ -128,7 +128,7 @@ function App() {
         {page === "articlePositioning" && <ArticlePositioningPage selectedArticleId={selectedPositionArticleId} />}
         {page === "operationPoints" && <OperationPointsPage />}
         {page === "favorites" && <FavoritesPage favorites={favorites} onRemove={toggleFavorite} onAddNote={addNoteFromFavorite} />}
-        {page === "notes" && <NotesPage notes={notes} onRemove={removeNote} onUpdate={updateNote} />}
+        {page === "notes" && <NotesPage notes={notes} onRemove={removeNote} onRemoveAll={() => setNotes([])} onUpdate={updateNote} />}
         {page === "disclaimer" && <DisclaimerPage />}
         {!["home", "articleNode", "conceptMap", "articlePositioning", "operationPoints", "favorites", "notes", "disclaimer"].includes(page) && <HomePage onNavigate={navigate} />}
       </main>

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { calculationFormulaGroups } from "../data/calculationFormulaNotes";
 import type { NoteItem } from "../types/navigation";
-import { buildFormulaNoteContent } from "../utils/notes";
 
 export function NotesPage({
   notes,
@@ -41,8 +40,9 @@ export function NotesPage({
       note.keyword,
       note.searchQuery,
       note.content,
+      drafts[note.id] ?? "",
     ].some((value) => value.toLowerCase().includes(keyword)));
-  }, [noteSearch, notes]);
+  }, [drafts, noteSearch, notes]);
 
   const filteredFormulaGroups = useMemo(() => {
     const keyword = formulaSearch.trim().toLowerCase();
@@ -137,8 +137,11 @@ export function NotesPage({
 
       {notes.length > 0 && (
         <section className="card note-search-panel">
-          <label>
+          <div className="note-search-heading">
             <strong>搜尋已儲存筆記</strong>
+            <span>{filteredNotes.length}/{notes.length}</span>
+          </div>
+          <label>
             <input
               type="search"
               value={noteSearch}
@@ -146,6 +149,11 @@ export function NotesPage({
               placeholder="輸入關鍵字、考點或搜尋句"
             />
           </label>
+          {noteSearch.trim() && (
+            <button className="button button-ghost note-search-clear" type="button" onClick={() => setNoteSearch("")}>
+              清除搜尋
+            </button>
+          )}
         </section>
       )}
 
@@ -160,16 +168,6 @@ export function NotesPage({
       ) : filteredNotes.map((note) => {
         const draft = drafts[note.id] ?? note.content;
         const hasUnsavedChange = draft !== note.content;
-        const formulaContent = buildFormulaNoteContent({
-          id: note.id,
-          type: "aiSearch",
-          title: note.title,
-          subtitle: note.searchQuery,
-          keyword: note.keyword,
-          searchQuery: note.searchQuery,
-          sourceLabel: note.sourceLabel,
-          url: note.searchUrl,
-        });
 
         return (
           <section className="card favorite-search-card" key={note.id}>
@@ -179,23 +177,6 @@ export function NotesPage({
               <p><strong>關鍵字：</strong>{note.keyword}</p>
               <p><strong>搜尋句：</strong>{note.searchQuery}</p>
             </div>
-            {formulaContent && (
-              <div className="note-formula-panel">
-                <div className="note-formula-heading">
-                  <strong>橫式計算式</strong>
-                  <button
-                    className="button button-ghost"
-                    type="button"
-                    onClick={() => {
-                      setDrafts((current) => ({ ...current, [note.id]: formulaContent }));
-                    }}
-                  >
-                    填入筆記
-                  </button>
-                </div>
-                <pre>{formulaContent}</pre>
-              </div>
-            )}
             <label className="note-editor">
               <strong>筆記內容</strong>
               <textarea

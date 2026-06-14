@@ -1570,8 +1570,26 @@ select {
   gap: 10px;
 }
 
-.note-search-panel strong {
+.note-search-heading {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.note-search-heading strong {
   color: #12365f;
+}
+
+.note-search-heading span {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #e7edf4;
+  color: #12365f;
+  font-size: 12px;
+  font-weight: 900;
 }
 
 .note-search-panel input {
@@ -1583,6 +1601,12 @@ select {
   background: #ffffff;
   font: inherit;
   font-weight: 800;
+}
+
+.note-search-clear {
+  width: 100%;
+  min-height: 38px;
+  margin-top: 10px;
 }
 
 .note-save-button {
@@ -1747,49 +1771,6 @@ select {
   color: #66758a;
   font-size: 12px;
   font-weight: 800;
-}
-
-.note-formula-panel {
-  display: grid;
-  gap: 8px;
-  border: 1px solid #cde4d5;
-  border-radius: 8px;
-  padding: 10px;
-  background: #f2fbf5;
-}
-
-.note-formula-heading {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.note-formula-heading strong {
-  color: #1d6e46;
-}
-
-.note-formula-heading .button {
-  min-height: 34px;
-  padding: 0 10px;
-  color: #1d6e46;
-  background: #dff3e6;
-  font-size: 12px;
-}
-
-.note-formula-panel pre {
-  max-height: 260px;
-  margin: 0;
-  border-radius: 7px;
-  padding: 10px;
-  overflow: auto;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  background: #162033;
-  color: #ffffff;
-  font-family: Consolas, "Courier New", monospace;
-  font-size: 12px;
-  line-height: 1.55;
 }
 
 .favorite-card-actions {

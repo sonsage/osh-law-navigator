@@ -4,7 +4,7 @@ const entries: Array<{ page: PageKey; title: string; text: string; icon: string;
   {
     page: "articleNode",
     title: "法條導航",
-    text: "先看第一、二章母法條文，再用原文關鍵詞查子法、附表與官方資料。",
+    text: "查看職安法條文與官方入口，再用關鍵字查子法、附表與考題。",
     icon: "法",
     tone: "blue",
   },

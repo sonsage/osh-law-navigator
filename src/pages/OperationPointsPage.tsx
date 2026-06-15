@@ -5,8 +5,10 @@ import {
   type OperationExamPoint,
   operationExamPoints,
 } from "../data/operationExamPoints";
+import { LicenseNode } from "../components/LicenseNode";
 import type { FavoriteItem } from "../types/navigation";
 import { sameFavorite } from "../utils/favorites";
+import { loadLicenseAccess } from "../utils/licenseCode";
 import { buildGoogleAIModeSearchUrl } from "../utils/searchQueryBuilder";
 
 const lawFilters = ["全部", "職業安全衛生設施規則", "營造安全衛生設施標準"] as const;
@@ -34,6 +36,8 @@ function buildOperationFavorite(point: OperationExamPoint): FavoriteItem {
 export function OperationPointsPage({ favorites, onToggleFavorite }: OperationPointsPageProps) {
   const [keyword, setKeyword] = useState("");
   const [lawFilter, setLawFilter] = useState<(typeof lawFilters)[number]>("全部");
+  const [licensed, setLicensed] = useState(() => loadLicenseAccess().unlocked);
+  const [favoriteMessage, setFavoriteMessage] = useState("");
 
   const filteredPoints = useMemo(() => {
     const normalizedKeyword = keyword.trim().toLowerCase();
@@ -51,11 +55,23 @@ export function OperationPointsPage({ favorites, onToggleFavorite }: OperationPo
     });
   }, [keyword, lawFilter]);
 
+  const toggleOperationFavorite = (favorite: FavoriteItem, isFavorite: boolean) => {
+    if (!licensed) {
+      setFavoriteMessage("作業考點收藏屬於授權便利功能，請先輸入授權碼。");
+      return;
+    }
+
+    onToggleFavorite(favorite);
+    setFavoriteMessage(isFavorite ? "已移除此作業考點收藏。" : "已加入作業考點收藏。");
+  };
+
   return (
     <div className="stack">
       <section className="card">
         <h2>作業考點名單</h2>
         <p>先找到「某某作業」名稱，再用 AI 搜尋查它會接作業計畫、作業主管、紀錄或報告書。</p>
+        <LicenseNode onAccessChange={setLicensed} />
+        {favoriteMessage && <p className="voice-status">{favoriteMessage}</p>}
       </section>
 
       <section className="card note-search-panel">
@@ -116,8 +132,8 @@ export function OperationPointsPage({ favorites, onToggleFavorite }: OperationPo
                   <a className="button button-ghost app-link-button" href={getOperationOfficialUrl(point)} target="_blank" rel="noreferrer">
                     官方條文
                   </a>
-                  <button className="button button-ghost" type="button" onClick={() => onToggleFavorite(favorite)}>
-                    {isFavorite ? "已收藏" : "加入收藏"}
+                  <button className="button button-ghost" type="button" onClick={() => toggleOperationFavorite(favorite, isFavorite)}>
+                    {licensed ? (isFavorite ? "已收藏" : "加入收藏") : "解鎖收藏"}
                   </button>
                 </div>
               </article>

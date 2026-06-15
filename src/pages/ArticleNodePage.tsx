@@ -24,7 +24,6 @@ export function ArticleNodePage({ onOpenArticleExam }: ArticleNodePageProps) {
   return (
     <div className="stack">
       <section className="card">
-        <p className="eyebrow dark">V1.0｜第一、二章</p>
         <h2>職業安全衛生法</h2>
         <p>完整列出母法條文。看完條文後，由你輸入或選取關鍵詞，再用 AI 搜尋查子法、附表、計畫、作業或考法。</p>
         <div className="action-row">

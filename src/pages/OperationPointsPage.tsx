@@ -2,13 +2,36 @@ import { useMemo, useState } from "react";
 import {
   buildOperationSearchQuery,
   getOperationOfficialUrl,
+  type OperationExamPoint,
   operationExamPoints,
 } from "../data/operationExamPoints";
+import type { FavoriteItem } from "../types/navigation";
+import { sameFavorite } from "../utils/favorites";
 import { buildGoogleAIModeSearchUrl } from "../utils/searchQueryBuilder";
 
 const lawFilters = ["全部", "職業安全衛生設施規則", "營造安全衛生設施標準"] as const;
 
-export function OperationPointsPage() {
+type OperationPointsPageProps = {
+  favorites: FavoriteItem[];
+  onToggleFavorite: (item: FavoriteItem) => void;
+};
+
+function buildOperationFavorite(point: OperationExamPoint): FavoriteItem {
+  const query = buildOperationSearchQuery(point);
+  return {
+    id: `operation:${point.id}`,
+    type: "aiSearch",
+    title: point.name,
+    subtitle: `${point.law} 第 ${point.article} 條`,
+    targetId: point.id,
+    url: buildGoogleAIModeSearchUrl(query),
+    keyword: point.name,
+    searchQuery: query,
+    sourceLabel: "作業考點名單",
+  };
+}
+
+export function OperationPointsPage({ favorites, onToggleFavorite }: OperationPointsPageProps) {
   const [keyword, setKeyword] = useState("");
   const [lawFilter, setLawFilter] = useState<(typeof lawFilters)[number]>("全部");
 
@@ -75,6 +98,8 @@ export function OperationPointsPage() {
         <section className="operation-point-list">
           {filteredPoints.map((point) => {
             const query = buildOperationSearchQuery(point);
+            const favorite = buildOperationFavorite(point);
+            const isFavorite = favorites.some((item) => sameFavorite(item, favorite));
             return (
               <article className="card operation-point-card" key={point.id}>
                 <small>{point.law} 第 {point.article} 條</small>
@@ -91,6 +116,9 @@ export function OperationPointsPage() {
                   <a className="button button-ghost app-link-button" href={getOperationOfficialUrl(point)} target="_blank" rel="noreferrer">
                     官方條文
                   </a>
+                  <button className="button button-ghost" type="button" onClick={() => onToggleFavorite(favorite)}>
+                    {isFavorite ? "已收藏" : "加入收藏"}
+                  </button>
                 </div>
               </article>
             );

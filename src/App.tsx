@@ -15,7 +15,7 @@ import { createNoteFromFavorite, loadNotes, sameNote, saveNotes } from "./utils/
 
 const pageMeta: Record<PageKey, { title: string; subtitle?: string }> = {
   home: { title: "職業安全衛生法導航", subtitle: "乙級管理員考試利器" },
-  articleNode: { title: "法條導航", subtitle: "第一、二章官方條文入口" },
+  articleNode: { title: "法條導航" },
   conceptMap: { title: "這條考什麼", subtitle: "用條號與關鍵詞查考法" },
   articlePositioning: { title: "法條定位" },
   operationPoints: { title: "作業考點", subtitle: "設施規則與營造標準作業名單" },
@@ -126,7 +126,7 @@ function App() {
         {page === "articleNode" && <ArticleNodePage onOpenArticleExam={openArticleExam} />}
         {page === "conceptMap" && <ConceptMapPage selectedArticleId={selectedExamArticleId} onOpenArticlePosition={openArticlePosition} />}
         {page === "articlePositioning" && <ArticlePositioningPage selectedArticleId={selectedPositionArticleId} />}
-        {page === "operationPoints" && <OperationPointsPage />}
+        {page === "operationPoints" && <OperationPointsPage favorites={favorites} onToggleFavorite={toggleFavorite} />}
         {page === "favorites" && <FavoritesPage favorites={favorites} onRemove={toggleFavorite} onAddNote={addNoteFromFavorite} />}
         {page === "notes" && <NotesPage notes={notes} onRemove={removeNote} onRemoveAll={() => setNotes([])} onUpdate={updateNote} />}
         {page === "disclaimer" && <DisclaimerPage />}
